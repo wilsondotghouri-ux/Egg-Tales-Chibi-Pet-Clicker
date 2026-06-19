@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🐣 Egg Tales - Chibi Pet Clicker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+                   RESET & ROOT VARIABLES
+                   ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary-pink: #ffb6c9;
+            --primary-pink-dark: #e8748c;
+            --secondary-mint: #b5ead7;
+            --secondary-lavender: #c9b1ff;
+            --cream: #fffdd0;
+            --soft-white: #fff5f5;
+            --shadow-pink: rgba(255, 100, 130, 0.25);
+            --shadow-soft: rgba(255, 150, 150, 0.15);
+            --radius-card: 20px;
+            --radius-btn: 50px;
+            --transition-speed: 0.3s;
+            --font-family: 'Quicksand', sans-serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8ec 50%, #ffdce4 100%);
+            overflow: hidden;
+            color: #4a2e36;
+        }
+
+        /* ============================================
+                   SCROLLBAR STYLING
+                   ============================================ */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 209, 220, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-pink);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-pink-dark);
+        }
+
+        /* ============================================
+                   LAYOUT GRID
+                   ============================================ */
+        .app-container {
+            display: grid;
+            grid-template-rows: 68px 1fr;
+            grid-template-columns: 280px 1fr;
+            grid-template-areas:
+                "topbar topbar"
+                "sidebar main";
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: rgba(255, 248, 248, 0.3);
+            backdrop-filter: blur(2px);
+        }
+
+        /* ============================================
+                   TOP NAVIGATION BAR
+                   ============================================ */
+        .top-bar {
+            grid-area: topbar;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 3px solid rgba(255, 183, 178, 0.4);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 10px;
+            box-shadow: 0 4px 30px rgba(255, 150, 150, 0.08);
+            z-index: 100;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            font-weight: 800;
+            font-size: 22px;
+            color: var(--primary-pink-dark);
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+        .brand span {
+            font-size: 28px;
+        }
+        .brand .subtitle {
+            font-weight: 400;
+            font-size: 12px;
+            color: #b07a8a;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+        }
+
+        .top-btn {
+            background: rgba(255, 240, 242, 0.8);
+            border: 2px solid rgba(255, 205, 212, 0.5);
+            border-radius: var(--radius-btn);
+            padding: 8px 18px;
+            font-family: var(--font-family);
+            font-weight: 700;
+            font-size: 13px;
+            color: #6b4b52;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+        }
+        .top-btn:hover {
+            transform: translateY(-2px);
+            background: #ffe3e7;
+            border-color: var(--primary-pink);
+            box-shadow: 0 6px 20px rgba(255, 100, 130, 0.15);
+        }
+        .top-btn:active {
+            transform: scale(0.95);
+        }
+        .top-btn.danger:hover {
+            background: #ffd1d1;
+            border-color: #ff6b6b;
+        }
+        .top-btn .badge {
+            background: var(--primary-pink);
+            color: white;
+            border-radius: 30px;
+            padding: 0 10px;
+            font-size: 11px;
+            line-height: 20px;
+        }
+
+        /* ============================================
+                   LEFT SIDEBAR - UPGRADES PANEL
+                   ============================================ */
+        .sidebar {
+            grid-area: sidebar;
+            background: rgba(255, 248, 248, 0.9);
+            backdrop-filter: blur(12px);
+            border-right: 2px solid rgba(255, 209, 220, 0.5);
+            padding: 16px 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .sidebar-header h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #b06a7a;
+            font-weight: 700;
+        }
+        .sidebar-header .stats {
+            font-size: 12px;
+            color: #b07a8a;
+            background: rgba(255, 209, 220, 0.3);
+            padding: 4px 12px;
+            border-radius: 30px;
+        }
+
+        .upgrade-card {
+            background: white;
+            border-radius: var(--radius-card);
+            padding: 14px 16px;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+            border: 2px solid rgba(255, 227, 231, 0.6);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .upgrade-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 182, 201, 0.05), transparent);
+            pointer-events: none;
+        }
+        .upgrade-card:hover {
+            transform: translateX(6px) scale(1.01);
+            border-color: var(--primary-pink);
+            box-shadow: 0 8px 28px rgba(255, 100, 130, 0.15);
+        }
+        .upgrade-card:active {
+            transform: scale(0.97);
+        }
+        .upgrade-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(0.3);
+        }
+        .upgrade-card.disabled:hover {
+            transform: none;
+            border-color: rgba(255, 227, 231, 0.6);
+        }
+
+        .upgrade-card .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .upgrade-card .title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #4a3338;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .upgrade-card .level-badge {
+            background: #ffdde1;
+            padding: 2px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #7a4f5a;
+        }
+        .upgrade-card .sub {
+            font-size: 13px;
+            color: #a07a82;
+            margin-top: 4px;
+        }
+        .upgrade-card .cost {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-pink-dark);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .upgrade-card .progress-bar {
+            height: 3px;
+            background: #f0e6e8;
+            border-radius: 10px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .upgrade-card .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-pink), var(--primary-pink-dark));
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* ============================================
+                   MAIN CENTER - EGG & DISPLAY
+                   ============================================ */
+        .main {
+            grid-area: main;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+        }
+
+        .egg-wrapper {
+            position: relative;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: transform 0.08s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .egg-wrapper:hover {
+            filter: drop-shadow(0 0 40px rgba(255, 100, 130, 0.2));
+        }
+        .egg-wrapper:active {
+            transform: scale(0.88) !important;
+        }
+
+        .egg-wrapper .float-animation {
+            animation: eggFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes eggFloat {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        #eggCanvas {
+            width: 240px;
+            height: 300px;
+            display: block;
+            filter: drop-shadow(0 20px 40px var(--shadow-pink));
+            transition: filter 0.3s;
+        }
+
+        /* Egg glow ring */
+        .egg-glow {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 182, 201, 0.15) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        .coin-display {
+            font-size: 38px;
+            font-weight: 800;
+            color: #4a2e36;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            padding: 10px 40px;
+            border-radius: 60px;
+            border: 2px solid rgba(255, 209, 220, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 8px 32px rgba(255, 150, 150, 0.1);
+        }
+        .coin-display .coin-icon {
+            font-size: 32px;
+        }
+        .coin-display .coin-value {
+            background: linear-gradient(135deg, #ffb347, #ff8a5c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hatch-area {
+            margin-top: 16px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hatch-btn {
+            background: linear-gradient(135deg, #ffb6c9, #ff8aa8);
+            border: none;
+            border-radius: var(--radius-btn);
+            padding: 14px 44px;
+            font-family: var(--font-family);
+            font-weight: 800;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(255, 100, 130, 0.35);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            touch-action: manipulation;
+            letter-spacing: 0.5px;
+        }
+        .hatch-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(255, 100, 130, 0.45);
+        }
+        .hatch-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+        .hatch-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .hatch-cost {
+            font-size: 15px;
+            color: #7a5a62;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 209, 220, 0.3);
+            font-weight: 600;
+        }
+
+        .equipped-pet-display {
+            margin-top: 16px;
+            font-size: 42px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+            padding: 6px 28px;
+            border-radius: 60px;
+            border: 2px dashed rgba(255, 183, 197, 0.5);
+            min-height: 65px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.3s;
+        }
+        .equipped-pet-display .label {
+            font-size: 14px;
+            color: #a07a82;
+            font-weight: 600;
+        }
+        .equipped-pet-display .pet-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #4a2e36;
+        }
+
+        /* ============================================
+                   FLOATING TEXT (+N COINS)
+                   ============================================ */
+        .float-text {
+            position: fixed;
+            font-weight: 800;
+            font-size: 30px;
+            color: #ffb347;
+            pointer-events: none;
+            z-index: 999;
+            text-shadow: 0 2px 12px rgba(255, 180, 50, 0.3);
+            animation: floatUp 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-140px) scale(1.6);
+            }
+        }
+
+        /* ============================================
+                   MODAL SYSTEM
+                   ============================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: modalFadeIn 0.25s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 32px;
+            padding: 36px 40px;
+            max-width: 480px;
+            width: 92%;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
+            animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        @keyframes modalPop {
+            from {
+                transform: scale(0.85) translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-box h2 {
+            font-size: 26px;
+            color: #4a2e36;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-box p {
+            color: #6b4b52;
+            line-height: 1.7;
+            margin-bottom: 18px;
+            font-size: 15px;
+        }
+        .modal-box input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid rgba(255, 209, 220, 0.6);
+            border-radius: 16px;
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+            background: #faf5f6;
+        }
+        .modal-box input:focus {
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 0 4px rgba(255, 138, 168, 0.15);
+            background: white;
+        }
+
+        .modal-box .modal-btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: var(--radius-btn);
+            font-family: var(--font-family);
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 10px;
+        }
+        .modal-box .modal-btn.primary {
+            background: linear-gradient(135deg, #ffb6c9, #ff8aa8);
+            color: white;
+        }
+        .modal-box .modal-btn.primary:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 20px rgba(255, 100, 130, 0.3);
+        }
+        .modal-box .modal-btn.secondary {
+            background: #f0e6e8;
+            color: #5a3d44;
+        }
+        .modal-box .modal-btn.secondary:hover {
+            background: #e5d6d9;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #a07a82;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 30px;
+            transition: all 0.2s;
+        }
+        .modal-close:hover {
+            color: #4a2e36;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* ============================================
+                   PET COLLECTION GRID
+                   ============================================ */
+        .pet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .pet-grid .pet-item {
+            background: #fff5f7;
+            border-radius: 14px;
+            padding: 10px 4px;
+            text-align: center;
+            border: 2px solid rgba(255, 221, 225, 0.5);
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a2e36;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .pet-grid .pet-item.owned {
+            border-color: var(--primary-pink);
+            background: #fff0f3;
+        }
+        .pet-grid .pet-item .emoji {
+            font-size: 34px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .pet-grid .pet-item .count {
+            font-size: 11px;
+            color: #a07a82;
+        }
+        .pet-grid .pet-item .rarity-tag {
+            font-size: 7px;
+            text-transform: uppercase;
+            padding: 1px 6px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 2px;
+            font-weight: 700;
+        }
+        .pet-grid .pet-item .pet-drawing {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 2px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        /* ============================================
+                   HATCH ANIMATION OVERLAY
+                   ============================================ */
+        .hatch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hatch-particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleBurst 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes particleBurst {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .hatch-reveal {
+            font-size: 120px;
+            animation: hatchPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            position: absolute;
+            filter: drop-shadow(0 20px 40px rgba(255, 100, 130, 0.3));
+        }
+        @keyframes hatchPop {
+            0% {
+                transform: scale(0) rotate(-30deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.4) rotate(8deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Screen flash */
+        .screen-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            pointer-events: none;
+            z-index: 1400;
+            opacity: 0;
+            animation: flashFade 0.5s ease forwards;
+        }
+        @keyframes flashFade {
+            0% {
+                opacity: 0.7;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* ============================================
+                   ADMIN PANEL - COMPLETELY HIDDEN
+                   ============================================ */
+        #admin-panel {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(40, 30, 35, 0.97);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 20px 28px;
+            z-index: 9999;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            min-width: 340px;
+            max-width: 92vw;
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #admin-panel.visible {
+            display: block;
+        }
+        #admin-panel .admin-title {
+            color: #ffd700;
+            font-weight: 800;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+        #admin-panel .admin-title .lock {
+            color: #ff6b6b;
+        }
+        #admin-panel .admin-btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        #admin-panel .admin-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-family: var(--font-family);
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+            flex: 1;
+            min-width: 100px;
+        }
+        #admin-panel .admin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        #admin-panel .admin-btn:active {
+            transform: scale(0.95);
+        }
+        #admin-panel .admin-btn.gold {
+            background: linear-gradient(135deg, #ffd700, #f5a623);
+        }
+        #admin-panel .admin-btn.purple {
+            background: linear-gradient(135deg, #c9b1ff, #9b7fd4);
+        }
+        #admin-panel .admin-btn.red {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+        #admin-panel .admin-btn.green {
+            background: linear-gradient(135deg, #51cf66, #2b8a3e);
+        }
+        #admin-panel .admin-btn.blue {
+            background: linear-gradient(135deg, #6bcbff, #4a9eff);
+        }
+        #admin-panel .admin-close {
+            position: absolute;
+            top: 8px;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 22px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        #admin-panel .admin-close:hover {
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* ============================================
+                   NEW FEATURES: EGG SELECTOR
+                   ============================================ */
+        .egg-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .egg-selector .egg-option {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid rgba(255, 209, 220, 0.3);
+            background: rgba(255, 255, 255, 0.4);
+            transition: all 0.2s;
+            font-family: var(--font-family);
+        }
+        .egg-selector .egg-option:hover {
+            transform: scale(1.05);
+        }
+        .egg-selector .egg-option.active {
+            border-color: var(--primary-pink);
+            background: rgba(255, 182, 201, 0.3);
+        }
+        .egg-selector .egg-option .egg-emoji {
+            font-size: 18px;
+        }
+
+        /* ============================================
+                   RESPONSIVE DESIGN
+                   ============================================ */
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-rows: 60px 1fr 210px;
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "topbar"
+                    "main"
+                    "sidebar";
+            }
+            .sidebar {
+                border-right: none;
+                border-top: 2px solid rgba(255, 209, 220, 0.5);
+                flex-direction: row;
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding: 10px 14px;
+                gap: 10px;
+                align-items: stretch;
+                background: rgba(255, 248, 248, 0.95);
+                backdrop-filter: blur(12px);
+            }
+            .sidebar-header {
+                display: none;
+            }
+            .sidebar .upgrade-card {
+                min-width: 160px;
+                flex-shrink: 0;
+                padding: 10px 14px;
+            }
+            .sidebar .upgrade-card:hover {
+                transform: translateY(-4px);
+            }
+            #eggCanvas {
+                width: 180px;
+                height: 225px;
+            }
+            .coin-display {
+                font-size: 26px;
+                padding: 6px 24px;
+            }
+            .top-bar .brand .subtitle {
+                display: none;
+            }
+            .top-btn {
+                padding: 6px 14px;
+                font-size: 11px;
+            }
+            #admin-panel {
+                min-width: auto;
+                width: 92vw;
+                bottom: 10px;
+                padding: 16px 18px;
+            }
+            #admin-panel .admin-btns {
+                flex-direction: column;
+            }
+            #admin-panel .admin-btn {
+                min-width: auto;
+            }
+            .egg-selector .egg-option {
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                padding: 0 10px;
+                gap: 5px;
+            }
+            .top-btn {
+                padding: 4px 10px;
+                font-size: 10px;
+                gap: 3px;
+            }
+            .top-btn .badge {
+                font-size: 9px;
+                padding: 0 6px;
+            }
+            .brand {
+                font-size: 16px;
+            }
+            .brand span {
+                font-size: 20px;
+            }
+            #eggCanvas {
+                width: 140px;
+                height: 175px;
+            }
+            .coin-display {
+                font-size: 20px;
+                padding: 4px 16px;
+                gap: 8px;
+            }
+            .coin-display .coin-icon {
+                font-size: 20px;
+            }
+            .hatch-btn {
+                padding: 10px 24px;
+                font-size: 15px;
+            }
+            .modal-box {
+                padding: 24px 18px;
+            }
+            .equipped-pet-display {
+                font-size: 30px;
+                padding: 4px 16px;
+                min-height: 50px;
+            }
+            .egg-selector .egg-option {
+                font-size: 9px;
+                padding: 3px 8px;
+            }
+            .egg-selector .egg-option .egg-emoji {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    APP CONTAINER
+    ============================================================ -->
+    <div class="app-container">
+
+        <!-- ===== TOP NAVIGATION BAR ===== -->
+        <header class="top-bar">
+            <div class="brand">
+                <span>🐣</span> Egg Tales
+                <span class="subtitle">✦ Chibi Pet Clicker</span>
+            </div>
+            <button class="top-btn" id="accountBtn">👤 <span id="usernameDisplay">Guest</span></button>
+            <button class="top-btn" id="saveBtn">💾 Save</button>
+            <button class="top-btn danger" id="resetBtn">🗑️ Reset</button>
+            <button class="top-btn" id="codesBtn">🎁 Codes</button>
+            <button class="top-btn" id="collectionBtn">📕 Pets</button>
+        </header>
+
+        <!-- ===== LEFT SIDEBAR - UPGRADES ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>⬆️ Upgrades</h3>
+                <span class="stats" id="totalUpgradeLevel">Lv.0</span>
+            </div>
+
+            <!-- Upgrade 1: Click Power -->
+            <div class="upgrade-card" id="clickUpgradeCard">
+                <div class="title-row">
+                    <div class="title">🖱️ Click Power</div>
+                    <span class="level-badge" id="clickLevel">Lv.0</span>
+                </div>
+                <div class="sub">+<span id="clickPowerBonus">0</span> per click</div>
+                <div class="cost">💰 <span id="clickCost">20</span></div>
+                <div class="progress-bar"><div class="fill" id="clickProgress" style="width:0%"></div></div>
+            </div>
+
+            <!-- Upgrade 2: Egg Tier -->
+            <div class="upgrade-card" id="tierUpgradeCard">
+                <div class="title-row">
+                    <div class="title">🥚 Egg Tier</div>
+                    <span class="level-badge" id="tierLabel">Common</span>
+                </div>
+                <div class="sub" id="tierDesc">→ Uncommon (100 🪙)</div>
+                <div class="cost">💰 <span id="tierCost">100</span></div>
+                <div class="progress-bar"><div class="fill" id="tierProgress" style="width:0%"></div></div>
+            </div>
+
+            <!-- Upgrade 3: Auto-Hatcher Paws -->
+            <div class="upgrade-card" id="autoUpgradeCard">
+                <div class="title-row">
+                    <div class="title">🐾 Auto-Hatcher Paws</div>
+                    <span class="level-badge" id="autoLevel">Lv.0</span>
+                </div>
+                <div class="sub">⚡ <span id="autoRate">0</span> coins/sec</div>
+                <div class="cost">💰 <span id="autoCost">50</span></div>
+                <div class="progress-bar"><div class="fill" id="autoProgress" style="width:0%"></div></div>
+            </div>
+
+            <!-- Upgrade 4: Luck Multiplier -->
+            <div class="upgrade-card" id="luckUpgradeCard">
+                <div class="title-row">
+                    <div class="title">🍀 Luck Multiplier</div>
+                    <span class="level-badge" id="luckLevel">Lv.0</span>
+                </div>
+                <div class="sub">✨ +<span id="luckBonus">0</span>% mythic chance</div>
+                <div class="cost">💰 <span id="luckCost">200</span></div>
+                <div class="progress-bar"><div class="fill" id="luckProgress" style="width:0%"></div></div>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CENTER ===== -->
+        <main class="main">
+            <div class="egg-wrapper float-animation" id="eggContainer">
+                <div class="egg-glow"></div>
+                <canvas id="eggCanvas" width="480" height="600"></canvas>
+            </div>
+
+            <div class="coin-display">
+                <span class="coin-icon">🪙</span>
+                <span class="coin-value" id="coinCounter">0</span>
+            </div>
+
+            <div class="hatch-area">
+                <button class="hatch-btn" id="hatchBtn">🐣 Hatch Egg</button>
+                <span class="hatch-cost" id="hatchCostDisplay">Cost: 10 🪙</span>
+            </div>
+
+            <!-- Egg Selector - NEW FEATURE -->
+            <div class="egg-selector" id="eggSelector">
+                <button class="egg-option active" data-tier="0">🥚 Common</button>
+                <button class="egg-option" data-tier="1">🥚 Uncommon</button>
+                <button class="egg-option" data-tier="2">🥚 Rare</button>
+                <button class="egg-option" data-tier="3">🥚 Legendary</button>
+                <button class="egg-option" data-tier="4">🥚 Mythic</button>
+                <button class="egg-option" data-tier="5">🥚 Divine</button>
+            </div>
+
+            <div class="equipped-pet-display" id="equippedDisplay">
+                <span class="label">🐾 Equipped:</span>
+                <span id="equippedPetEmoji">❓</span>
+                <span class="pet-name" id="equippedPetName">None</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- ============================================================
+    MODAL OVERLAY
+    ============================================================ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box" id="modalBox">
+            <button class="modal-close" id="modalClose">✕</button>
+            <div id="modalContent">
+                <!-- Dynamic content rendered by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    ADMIN PANEL - COMPLETELY HIDDEN (display: none)
+    ============================================================ -->
+    <div id="admin-panel">
+        <button class="admin-close" id="adminClose">✕</button>
+        <div class="admin-title">
+            <span class="lock">🔒</span> Developer Console
+            <span style="font-size:12px;color:#888;font-weight:400;">(hidden backdoor)</span>
+        </div>
+        <div class="admin-btns">
+            <button class="admin-btn gold" id="adminCoins">💰 +1,000,000 Coins</button>
+            <button class="admin-btn purple" id="adminUnlockAll">🔓 Unlock All Eggs</button>
+            <button class="admin-btn red" id="adminClearPets">🗑️ Clear Pet Inventory</button>
+            <button class="admin-btn blue" id="adminMaxUpgrades">⬆️ Max All Upgrades</button>
+            <button class="admin-btn green" id="adminClosePanel">✔️ Close</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT - COMPLETE GAME LOGIC
+    ============================================================ -->
+    <script>
+        // ============================================================
+        // 1. PET REGISTRY WITH CUTE DRAWINGS
+        // ============================================================
+        const PET_REGISTRY = {
+            Common: {
+                tier: 0,
+                cost: 10,
+                color: '#b5c9b0',
+                pets: [
+                    { name: 'Dog', emoji: '🐕', drawing: '🐶' },
+                    { name: 'Cat', emoji: '🐈', drawing: '🐱' },
+                    { name: 'Rabbit', emoji: '🐇', drawing: '🐰' },
+                    { name: 'Hamster', emoji: '🐹', drawing: '🐹' }
+                ]
+            },
+            Uncommon: {
+                tier: 1,
+                cost: 10,
+                color: '#7ec8c8',
+                pets: [
+                    { name: 'Parrot', emoji: '🦜', drawing: '🦜' },
+                    { name: 'Labrador', emoji: '🦮', drawing: '🐕' },
+                    { name: 'Axolotl', emoji: '🦎', drawing: '🦎' },
+                    { name: 'Hedgehog', emoji: '🦔', drawing: '🦔' }
+                ]
+            },
+            Rare: {
+                tier: 2,
+                cost: 10,
+                color: '#f7c56e',
+                pets: [
+                    { name: 'Lion', emoji: '🦁', drawing: '🦁' },
+                    { name: 'Hyena', emoji: '🐾', drawing: '🐾' },
+                    { name: 'Tiger', emoji: '🐯', drawing: '🐯' },
+                    { name: 'Red Panda', emoji: '🐼', drawing: '🐼' },
+                    { name: 'Sea Otter', emoji: '🦦', drawing: '🦦' }
+                ]
+            },
+            Legendary: {
+                tier: 3,
+                cost: 10,
+                color: '#c97ddb',
+                pets: [
+                    { name: 'Meerkat', emoji: '🦊', drawing: '🦊' },
+                    { name: 'Penguin', emoji: '🐧', drawing: '🐧' },
+                    { name: 'Rhinoceros', emoji: '🦏', drawing: '🦏' },
+                    { name: 'Capybara', emoji: '🐹', drawing: '🐹' },
+                    { name: 'Koala', emoji: '🐨', drawing: '🐨' }
+                ]
+            },
+            Mythic: {
+                tier: 4,
+                cost: 10,
+                color: '#ff6b8a',
+                pets: [
+                    { name: 'Leopard', emoji: '🐆', drawing: '🐆' },
+                    { name: 'Wolf', emoji: '🐺', drawing: '🐺' },
+                    { name: 'Fox', emoji: '🦊', drawing: '🦊' },
+                    { name: 'Fennec Fox', emoji: '🦊', drawing: '🦊' },
+                    { name: 'Shiba Inu', emoji: '🐕', drawing: '🐕' }
+                ]
+            },
+            Divine: {
+                tier: 5,
+                cost: 10,
+                color: '#ffd700',
+                pets: [
+                    { name: 'Chibi Unicorn', emoji: '🦄', drawing: '🦄' },
+                    { name: 'Dragon Hatchling', emoji: '🐉', drawing: '🐉' },
+                    { name: 'Cosmic Slime', emoji: '🪸', drawing: '🪸' },
+                    { name: 'Starlight Phoenix', emoji: '🔥', drawing: '🔥' },
+                    { name: 'Celestial Fox', emoji: '🦊', drawing: '🦊' }
+                ]
+            }
+        };
+
+        const TIER_NAMES = ['Common', 'Uncommon', 'Rare', 'Legendary', 'Mythic', 'Divine'];
+        const TIER_COLORS = ['#b5c9b0', '#7ec8c8', '#f7c56e', '#c97ddb', '#ff6b8a', '#ffd700'];
+
+        // ============================================================
+        // 2. EGG DESIGNS (Different colors per tier)
+        // ============================================================
+        const EGG_DESIGNS = [
+            { name: 'Common Egg', color1: '#fff5f7', color2: '#f5b0c2', glow: 'rgba(255,150,170,0.2)' },
+            { name: 'Uncommon Egg', color1: '#f0faff', color2: '#7ec8c8', glow: 'rgba(126,200,200,0.2)' },
+            { name: 'Rare Egg', color1: '#fff8f0', color2: '#f7c56e', glow: 'rgba(247,197,110,0.2)' },
+            { name: 'Legendary Egg', color1: '#f8f0ff', color2: '#c97ddb', glow: 'rgba(201,125,219,0.2)' },
+            { name: 'Mythic Egg', color1: '#fff0f3', color2: '#ff6b8a', glow: 'rgba(255,107,138,0.25)' },
+            { name: 'Divine Egg', color1: '#fffde0', color2: '#ffd700', glow: 'rgba(255,215,0,0.3)' }
+        ];
+
+        // ============================================================
+        // 3. UPGRADE COST FORMULAS
+        // ============================================================
+        function getClickCost(level) {
+            return Math.floor(20 * Math.pow(1.15, level));
+        }
+
+        function getTierCost(tier) {
+            const costs = [0, 100, 500, 2500, 15000, 75000];
+            return costs[tier] || 999999;
+        }
+
+        function getAutoCost(level) {
+            return Math.floor(50 * Math.pow(1.18, level));
+        }
+
+        function getLuckCost(level) {
+            return Math.floor(200 * Math.pow(1.25, level));
+        }
+
+        function getAutoRate(level) {
+            return Math.floor(level * 0.5 + 0.5);
+        }
+
+        function getLuckBonus(level) {
+            return Math.floor(level * 2);
+        }
+
+        // ============================================================
+        // 4. GAME STATE
+        // ============================================================
+        const defaultState = {
+            username: 'Guest',
+            coins: 0,
+            totalClicks: 0,
+            clickLevel: 0,
+            eggTier: 0,
+            autoLevel: 0,
+            luckLevel: 0,
+            ownedPets: {},
+            equippedPet: null,
+            mythicPityCounter: 0,
+            lastSave: Date.now(),
+            adminUnlocked: false,
+            totalPetsHatched: 0,
+            selectedEggTier: 0 // For egg selector
+        };
+
+        let gameState = JSON.parse(JSON.stringify(defaultState));
+
+        // ============================================================
+        // 5. DOM REFERENCES
+        // ============================================================
+        const $ = id => document.getElementById(id);
+        const coinCounter = $('coinCounter');
+        const hatchBtn = $('hatchBtn');
+        const hatchCostDisplay = $('hatchCostDisplay');
+        const clickLevel = $('clickLevel');
+        const clickCost = $('clickCost');
+        const clickPowerBonus = $('clickPowerBonus');
+        const clickProgress = $('clickProgress');
+        const tierLabel = $('tierLabel');
+        const tierDesc = $('tierDesc');
+        const tierCost = $('tierCost');
+        const tierProgress = $('tierProgress');
+        const autoLevel = $('autoLevel');
+        const autoRate = $('autoRate');
+        const autoCost = $('autoCost');
+        const autoProgress = $('autoProgress');
+        const luckLevel = $('luckLevel');
+        const luckBonus = $('luckBonus');
+        const luckCost = $('luckCost');
+        const luckProgress = $('luckProgress');
+        const usernameDisplay = $('usernameDisplay');
+        const equippedPetEmoji = $('equippedPetEmoji');
+        const equippedPetName = $('equippedPetName');
+        const totalUpgradeLevel = $('totalUpgradeLevel');
+        const eggCanvas = $('eggCanvas');
+        const ctx = eggCanvas.getContext('2d');
+        const adminPanel = $('admin-panel');
+
+        // ============================================================
+        // 6. SAVE / LOAD
+        // ============================================================
+        function saveGame() {
+            gameState.lastSave = Date.now();
+            localStorage.setItem('eggTalesSave', JSON.stringify(gameState));
+            showToast('💾 Progress saved!');
+        }
+
+        function loadGame() {
+            const raw = localStorage.getItem('eggTalesSave');
+            if (raw) {
+                try {
+                    const saved = JSON.parse(raw);
+                    gameState = { ...defaultState, ...saved };
+                    if (!gameState.ownedPets) gameState.ownedPets = {};
+                    if (gameState.adminUnlocked === undefined) gameState.adminUnlocked = false;
+                    if (gameState.totalPetsHatched === undefined) gameState.totalPetsHatched = 0;
+                    if (gameState.selectedEggTier === undefined) gameState.selectedEggTier = 0;
+                    return true;
+                } catch (e) {
+                    console.warn('Save corrupt, starting fresh');
+                }
+            }
+            return false;
+        }
+
+        function resetGame() {
+            if (confirm('🗑️ Reset all progress? This cannot be undone!')) {
+                if (confirm('Are you absolutely sure?')) {
+                    localStorage.removeItem('eggTalesSave');
+                    gameState = JSON.parse(JSON.stringify(defaultState));
+                    updateUI();
+                    showToast('🔄 Reset complete!');
+                }
+            }
+        }
+
+        // ============================================================
+        // 7. TOAST NOTIFICATIONS
+        // ============================================================
+        function showToast(msg, duration = 2500) {
+            const existing = document.querySelector('.toast-notification');
+            if (existing) existing.remove();
+
+            const el = document.createElement('div');
+            el.className = 'toast-notification';
+            el.style.cssText = `
+                    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+                    background: rgba(60,40,45,0.92); color: white; padding: 14px 32px;
+                    border-radius: 50px; font-family: 'Quicksand', sans-serif;
+                    font-weight: 700; font-size: 16px; z-index: 9998;
+                    backdrop-filter: blur(8px); box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+                    animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    max-width: 90vw; text-align: center;
+                    border: 2px solid rgba(255,255,255,0.1);
+                `;
+            el.textContent = msg;
+            document.body.appendChild(el);
+            setTimeout(() => {
+                el.style.transition = 'opacity 0.4s, transform 0.4s';
+                el.style.opacity = '0';
+                el.style.transform = 'translateX(-50%) scale(0.9)';
+                setTimeout(() => el.remove(), 500);
+            }, duration);
+        }
+
+        // ============================================================
+        // 8. FLOATING TEXT
+        // ============================================================
+        function spawnFloatText(x, y, text, color = '#ffb347') {
+            const el = document.createElement('div');
+            el.className = 'float-text';
+            el.textContent = text;
+            el.style.left = x + 'px';
+            el.style.top = y + 'px';
+            el.style.color = color;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1100);
+        }
+
+        // ============================================================
+        // 9. EGG DRAWING - DIFFERENT DESIGNS PER TIER
+        // ============================================================
+        function drawEgg(scale = 1, tier = null) {
+            const w = eggCanvas.width,
+                h = eggCanvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            const currentTier = tier !== null ? tier : gameState.eggTier;
+            const design = EGG_DESIGNS[currentTier] || EGG_DESIGNS[0];
+
+            const cx = w / 2,
+                cy = h / 2 + 10;
+            const rx = 140 * scale,
+                ry = 180 * scale;
+
+            // Outer glow
+            const grad = ctx.createRadialGradient(cx - 30, cy - 50, 10, cx, cy, ry + 40);
+            grad.addColorStop(0, design.glow);
+            grad.addColorStop(1, 'rgba(255,215,220,0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, rx + 50, ry + 50, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Egg shadow
+            ctx.shadowColor = 'rgba(255,150,170,0.15)';
+            ctx.shadowBlur = 40;
+
+            // Egg body gradient - custom per tier
+            const gradient = ctx.createRadialGradient(cx - 40, cy - 60, 20, cx, cy, rx);
+            gradient.addColorStop(0, design.color1);
+            gradient.addColorStop(0.25, design.color1);
+            gradient.addColorStop(0.6, design.color2);
+            gradient.addColorStop(0.85, design.color2);
+            gradient.addColorStop(1, design.color2 + '99');
+
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Pattern overlay - sparkles for higher tiers
+            if (currentTier >= 2) {
+                for (let i = 0; i < (currentTier * 3); i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = Math.random() * rx * 0.7;
+                    const px = cx + Math.cos(angle) * dist;
+                    const py = cy + Math.sin(angle) * dist * 0.8;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 2 + Math.random() * 3, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${0.1 + Math.random() * 0.3})`;
+                    ctx.fill();
+                }
+            }
+
+            // Main highlight
+            ctx.beginPath();
+            ctx.ellipse(cx - 40, cy - 60, 32, 42, -0.3, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.fill();
+
+            // Secondary highlight
+            ctx.beginPath();
+            ctx.ellipse(cx - 50, cy - 75, 12, 16, -0.2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.fill();
+
+            // Sparkle
+            ctx.beginPath();
+            ctx.arc(cx - 55, cy - 90, 5 + currentTier * 0.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.fill();
+
+            // Tier-specific decoration
+            if (currentTier === 5) {
+                // Divine glow ring
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, rx + 15, ry + 15, 0, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255,215,0,0.2)';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 10]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // ===== KAWAII FACE =====
+            const eyeX = cx - 20,
+                eyeY = cy - 25;
+
+            // Blush
+            ctx.beginPath();
+            ctx.ellipse(eyeX - 32, eyeY + 24, 16, 10, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,150,170,0.2)';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(eyeX + 32, eyeY + 24, 16, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Eye whites
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'rgba(0,0,0,0.05)';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.ellipse(eyeX - 8, eyeY, 20, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(eyeX + 8, eyeY, 20, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Pupils - bigger and cuter
+            ctx.fillStyle = '#3d2b30';
+            ctx.beginPath();
+            ctx.ellipse(eyeX - 4, eyeY + 2, 10, 15, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(eyeX + 12, eyeY + 2, 10, 15, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Eye shine (extra sparkle)
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(eyeX - 8, eyeY - 6, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(eyeX + 8, eyeY - 6, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(eyeX - 14, eyeY - 10, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(eyeX + 2, eyeY - 10, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Tiny smile
+            ctx.beginPath();
+            ctx.arc(cx, cy + 24, 10, 0.1, Math.PI - 0.1);
+            ctx.strokeStyle = '#9a7a7a';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Extra blush dots
+            ctx.fillStyle = 'rgba(255,150,170,0.12)';
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * Math.PI * 2 + 0.2;
+                const bx = cx + Math.cos(angle) * 55;
+                const by = cy + Math.sin(angle) * 45 + 10;
+                ctx.beginPath();
+                ctx.arc(bx, by, 5 + Math.random() * 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // ============================================================
+        // 10. CLICK EGG
+        // ============================================================
+        function clickEgg(e) {
+            const rect = eggCanvas.getBoundingClientRect();
+            const x = e.clientX || e.touches?.[0]?.clientX || rect.left + rect.width / 2;
+            const y = e.clientY || e.touches?.[0]?.clientY || rect.top + rect.height / 2;
+
+            const bonus = getClickBonus();
+            const gain = 1 + bonus;
+            gameState.coins += gain;
+            gameState.totalClicks++;
+
+            // Visual feedback
+            const colors = ['#ffb347', '#ff6b6b', '#ffd93d', '#6bcbff', '#b5ead7', '#c9b1ff'];
+            spawnFloatText(x - 20, y - 40, `+${gain}`, colors[Math.floor(Math.random() * colors.length)]);
+
+            const wrapper = $('eggContainer');
+            wrapper.style.transition = 'transform 0.08s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            wrapper.style.transform = 'scale(0.82)';
+            setTimeout(() => {
+                wrapper.style.transform = 'scale(1)';
+            }, 100);
+
+            updateUI();
+        }
+
+        function getClickBonus() {
+            let bonus = gameState.clickLevel;
+            // Pet bonuses
+            for (let petName in gameState.ownedPets) {
+                const count = gameState.ownedPets[petName] || 0;
+                for (let rarity in PET_REGISTRY) {
+                    const found = PET_REGISTRY[rarity].pets.find(p => p.name === petName);
+                    if (found) {
+                        const bonusMap = {
+                            Common: 0.5,
+                            Uncommon: 1.5,
+                            Rare: 4,
+                            Legendary: 12,
+                            Mythic: 40,
+                            Divine: 120
+                        };
+                        bonus += bonusMap[rarity] * count;
+                        break;
+                    }
+                }
+            }
+            return Math.floor(bonus);
+        }
+
+        // ============================================================
+        // 11. HATCH SYSTEM
+        // ============================================================
+        function hatchEgg() {
+            const tierName = TIER_NAMES[gameState.selectedEggTier || gameState.eggTier];
+            const tierData = PET_REGISTRY[tierName];
+            const cost = tierData.cost;
+
+            if (gameState.coins < cost) {
+                showToast(`❌ Need ${cost} coins to hatch!`);
+                return;
+            }
+
+            gameState.coins -= cost;
+            const pet = pickPetByTier(gameState.selectedEggTier || gameState.eggTier);
+            const key = pet.name;
+
+            gameState.ownedPets[key] = (gameState.ownedPets[key] || 0) + 1;
+            gameState.equippedPet = key;
+            gameState.totalPetsHatched++;
+
+            if (pet.tier >= 4) {
+                gameState.mythicPityCounter = 0;
+                showToast(`🌟 ${pet.rarity}! You got ${pet.emoji} ${pet.name}!`);
+            } else {
+                gameState.mythicPityCounter++;
+                showToast(`🐣 Hatched: ${pet.emoji} ${pet.name} (${pet.rarity})`);
+            }
+
+            playHatchAnimation(pet);
+            updateUI();
+            saveGame();
+        }
+
+        function pickPetByTier(tier) {
+            const tierName = TIER_NAMES[tier];
+            const tierData = PET_REGISTRY[tierName];
+            const pool = tierData.pets;
+
+            // Luck multiplier increases chance of higher rarity
+            const luckBonus = getLuckBonus(gameState.luckLevel);
+            const mythicBoost = Math.min(luckBonus / 100, 0.8);
+
+            let weights = pool.map((p, i) => {
+                let base = 1;
+                if (tier === 5) base = 0.2;
+                if (tier === 4) base = 1 + mythicBoost;
+                return base;
+            });
+
+            if (tier >= 4 && gameState.mythicPityCounter >= 5) {
+                weights = weights.map(w => w * (1 + gameState.mythicPityCounter * 0.2));
+            }
+
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            let rand = Math.random() * totalWeight;
+            let cumulative = 0;
+            let chosenIndex = 0;
+
+            for (let i = 0; i < weights.length; i++) {
+                cumulative += weights[i];
+                if (rand <= cumulative) {
+                    chosenIndex = i;
+                    break;
+                }
+            }
+
+            const pet = { ...pool[chosenIndex], rarity: tierName, tier: tier };
+            return pet;
+        }
+
+        // ============================================================
+        // 12. HATCH ANIMATION
+        // ============================================================
+        function playHatchAnimation(pet) {
+            // Screen flash
+            const flash = document.createElement('div');
+            flash.className = 'screen-flash';
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 600);
+
+            const overlay = document.createElement('div');
+            overlay.className = 'hatch-overlay';
+            document.body.appendChild(overlay);
+
+            // Confetti particles
+            const colors = ['#ffb6c9', '#ffd93d', '#6bcbff', '#b5ead7', '#ff8a9c', '#c9b1ff', '#ff6b6b', '#ffd700'];
+            for (let i = 0; i < 55; i++) {
+                const p = document.createElement('div');
+                p.className = 'hatch-particle';
+                const size = 6 + Math.random() * 18;
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 100 + Math.random() * 300;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--ty', Math.sin(angle) * dist - 140 + 'px');
+                p.style.left = '50%';
+                p.style.top = '50%';
+                p.style.borderRadius = Math.random() > 0.5 ? '50%' : '4px';
+                overlay.appendChild(p);
+            }
+
+            // Pet reveal with drawing
+            const reveal = document.createElement('div');
+            reveal.className = 'hatch-reveal';
+            reveal.textContent = pet.drawing || pet.emoji;
+            reveal.style.left = '50%';
+            reveal.style.top = '50%';
+            reveal.style.transform = 'translate(-50%, -50%)';
+            overlay.appendChild(reveal);
+
+            // Sparkle stars
+            for (let i = 0; i < 15; i++) {
+                const star = document.createElement('div');
+                star.style.cssText = `
+                        position: absolute; font-size: 24px;
+                        animation: floatUp 1s ease-out forwards;
+                        animation-delay: ${i * 0.04}s;
+                        left: ${35 + Math.random() * 30}%;
+                        top: ${35 + Math.random() * 30}%;
+                    `;
+                star.textContent = ['✦', '✧', '⭐', '✨', '🌟'][Math.floor(Math.random() * 5)];
+                overlay.appendChild(star);
+            }
+
+            setTimeout(() => {
+                overlay.remove();
+            }, 1500);
+        }
+
+        // ============================================================
+        // 13. UPGRADE FUNCTIONS
+        // ============================================================
+        function buyClickUpgrade() {
+            const cost = getClickCost(gameState.clickLevel);
+            if (gameState.coins < cost) {
+                showToast('❌ Not enough coins!');
+                return;
+            }
+            gameState.coins -= cost;
+            gameState.clickLevel++;
+            updateUI();
+            saveGame();
+            showToast(`⬆️ Click Power Lv.${gameState.clickLevel}!`);
+        }
+
+        function buyTierUpgrade() {
+            const nextTier = gameState.eggTier + 1;
+            if (nextTier >= TIER_NAMES.length) {
+                showToast('🌟 Max tier reached!');
+                return;
+            }
+            const cost = getTierCost(nextTier);
+            if (gameState.coins < cost) {
+                showToast('❌ Not enough coins!');
+                return;
+            }
+            gameState.coins -= cost;
+            gameState.eggTier = nextTier;
+            updateUI();
+            saveGame();
+            showToast(`🥚 ${TIER_NAMES[nextTier]} eggs unlocked!`);
+        }
+
+        function buyAutoUpgrade() {
+            const cost = getAutoCost(gameState.autoLevel);
+            if (gameState.coins < cost) {
+                showToast('❌ Not enough coins!');
+                return;
+            }
+            gameState.coins -= cost;
+            gameState.autoLevel++;
+            updateUI();
+            saveGame();
+            showToast(`🐾 Auto-Hatcher Lv.${gameState.autoLevel}!`);
+        }
+
+        function buyLuckUpgrade() {
+            const cost = getLuckCost(gameState.luckLevel);
+            if (gameState.coins < cost) {
+                showToast('❌ Not enough coins!');
+                return;
+            }
+            gameState.coins -= cost;
+            gameState.luckLevel++;
+            updateUI();
+            saveGame();
+            showToast(`🍀 Luck Lv.${gameState.luckLevel}!`);
+        }
+
+        // ============================================================
+        // 14. COLLECTION LOG
+        // ============================================================
+        function openCollection() {
+            const modal = $('modalOverlay');
+            const content = $('modalContent');
+            let html = `
+                    <h2>📕 Collection Log</h2>
+                    <p>Your adorable pet family! <span style="font-size:14px;color:#a07a82;">(Total: ${gameState.totalPetsHatched})</span></p>
+                    <div class="pet-grid">
+                `;
+
+            let totalOwned = 0;
+            for (let rarity in PET_REGISTRY) {
+                const pets = PET_REGISTRY[rarity].pets;
+                for (let p of pets) {
+                    const count = gameState.ownedPets[p.name] || 0;
+                    totalOwned += count;
+                    const owned = count > 0;
+                    const rarityColor = {
+                        Common: '#b5c9b0',
+                        Uncommon: '#7ec8c8',
+                        Rare: '#f7c56e',
+                        Legendary: '#c97ddb',
+                        Mythic: '#ff6b8a',
+                        Divine: '#ffd700'
+                    };
+                    html += `
+                            <div class="pet-item ${owned ? 'owned' : ''}">
+                                <span class="pet-drawing">${p.drawing || p.emoji}</span>
+                                ${p.name}
+                                <span class="count">${owned ? `x${count}` : '🔒'}</span>
+                                <span class="rarity-tag" style="background:${rarityColor[rarity]}40;color:${rarityColor[rarity]}">${rarity}</span>
+                            </div>
+                        `;
+                }
+            }
+            html += `
+                    </div>
+                    <p style="text-align:center;font-weight:700;color:#4a2e36;">Total Pets: ${totalOwned}</p>
+                    <button class="modal-btn primary" onclick="closeModal()">Close</button>
+                `;
+            content.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        // ============================================================
+        // 15. ACCOUNT MODAL
+        // ============================================================
+        function openAccount() {
+            const modal = $('modalOverlay');
+            const content = $('modalContent');
+            content.innerHTML = `
+                    <h2>👤 Your Profile</h2>
+                    <p>Choose a cute username! (No password needed, saves locally)</p>
+                    <input type="text" id="usernameInput" placeholder="Enter username..." maxlength="14" value="${gameState.username}">
+                    <button class="modal-btn primary" onclick="setUsername()">✨ Save Name</button>
+                    <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                `;
+            modal.classList.add('active');
+            setTimeout(() => {
+                const inp = $('usernameInput');
+                if (inp) { inp.focus();
+                    inp.select(); }
+            }, 100);
+        }
+
+        function setUsername() {
+            const inp = $('usernameInput');
+            if (inp && inp.value.trim()) {
+                gameState.username = inp.value.trim().slice(0, 14);
+                updateUI();
+                saveGame();
+                showToast(`👋 Hello, ${gameState.username}!`);
+                closeModal();
+            } else {
+                showToast('Please enter a name!');
+            }
+        }
+
+        // ============================================================
+        // 16. CODES MODAL - WITH HIDDEN ADMIN BACKDOOR (FIXED!)
+        // ============================================================
+        function openCodes() {
+            const modal = $('modalOverlay');
+            const content = $('modalContent');
+            content.innerHTML = `
+                    <h2>🎁 Redeem Code</h2>
+                    <p>Enter a secret code for bonus coins!</p>
+                    <input type="text" id="codeInput" placeholder="Enter code..." style="text-transform:uppercase;">
+                    <button class="modal-btn primary" onclick="redeemCode()">🎉 Redeem</button>
+                    <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                    <p style="margin-top:12px;font-size:13px;color:#a07a82;">✨ Try: BANANA100, CHIBI2025, EGGBONUS, GOLDENEGG</p>
+                `;
+            modal.classList.add('active');
+            setTimeout(() => {
+                const inp = $('codeInput');
+                if (inp) inp.focus();
+            }, 100);
+        }
+
+        function redeemCode() {
+            const inp = $('codeInput');
+            if (!inp) return;
+            const code = inp.value.trim().toUpperCase();
+
+            // ==========================================================
+            // 🔐 HIDDEN DEVELOPER BACKDOOR - FIXED AND WORKING!
+            // ==========================================================
+            if (code === 'CHIBI_ADMIN') {
+                // Toggle admin panel visibility
+                if (adminPanel.classList.contains('visible')) {
+                    adminPanel.classList.remove('visible');
+                    showToast('🔒 Admin panel closed', 1000);
+                } else {
+                    adminPanel.classList.add('visible');
+                    showToast('🔓 Admin panel unlocked!', 1500);
+                }
+                closeModal();
+                return;
+            }
+
+            // Regular public codes
+            const codes = {
+                'BANANA100': 100,
+                'CHIBI2025': 250,
+                'EGGBONUS': 75,
+                'GOLDENEGG': 500,
+                'PETLOVER': 150,
+                'HAPPYHATCH': 200,
+                'CHIBICUTE': 350,
+                'LUCKYEGG': 100,
+                'RAINBOW': 500,
+                'STARLIGHT': 750,
+                'MOONBEAM': 300
+            };
+
+            if (codes[code]) {
+                gameState.coins += codes[code];
+                updateUI();
+                saveGame();
+                showToast(`🎉 +${codes[code]} coins!`);
+                closeModal();
+            } else {
+                showToast('❌ Invalid code!');
+            }
+        }
+
+        // ============================================================
+        // 17. ADMIN PANEL FUNCTIONS - ALL WORKING
+        // ============================================================
+        function adminAddCoins() {
+            gameState.coins += 1000000;
+            updateUI();
+            saveGame();
+            showToast('💰 +1,000,000 coins! (Admin)');
+        }
+
+        function adminUnlockAllEggs() {
+            gameState.eggTier = TIER_NAMES.length - 1;
+            gameState.selectedEggTier = TIER_NAMES.length - 1;
+            updateUI();
+            saveGame();
+            showToast('🔓 All egg tiers unlocked! (Admin)');
+            // Update egg selector
+            document.querySelectorAll('.egg-option').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.tier) === gameState.eggTier);
+            });
+        }
+
+        function adminClearPets() {
+            if (confirm('🗑️ Clear all pet inventory? This cannot be undone!')) {
+                gameState.ownedPets = {};
+                gameState.equippedPet = null;
+                updateUI();
+                saveGame();
+                showToast('🗑️ Pet inventory cleared! (Admin)');
+            }
+        }
+
+        function adminMaxUpgrades() {
+            gameState.clickLevel = 50;
+            gameState.autoLevel = 30;
+            gameState.luckLevel = 25;
+            gameState.eggTier = TIER_NAMES.length - 1;
+            gameState.selectedEggTier = TIER_NAMES.length - 1;
+            updateUI();
+            saveGame();
+            showToast('⬆️ All upgrades maxed! (Admin)');
+        }
+
+        // ============================================================
+        // 18. EGG SELECTOR
+        // ============================================================
+        function setupEggSelector() {
+            const selector = $('eggSelector');
+            selector.querySelectorAll('.egg-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tier = parseInt(this.dataset.tier);
+                    if (tier <= gameState.eggTier) {
+                        gameState.selectedEggTier = tier;
+                        selector.querySelectorAll('.egg-option').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        drawEgg(1, tier);
+                        updateUI();
+                    } else {
+                        showToast(`🔒 Unlock ${TIER_NAMES[tier]} first!`);
+                    }
+                });
+            });
+        }
+
+        // ============================================================
+        // 19. MODAL HELPERS
+        // ============================================================
+        function closeModal() {
+            $('modalOverlay').classList.remove('active');
+        }
+
+        // ============================================================
+        // 20. UPDATE UI
+        // ============================================================
+        function updateUI() {
+            const coins = Math.floor(gameState.coins);
+            coinCounter.textContent = coins.toLocaleString();
+
+            // Click upgrade
+            const clickLv = gameState.clickLevel;
+            clickLevel.textContent = `Lv.${clickLv}`;
+            clickCost.textContent = getClickCost(clickLv);
+            clickPowerBonus.textContent = getClickBonus();
+            const clickMax = 50;
+            clickProgress.style.width = `${Math.min((clickLv / clickMax) * 100, 100)}%`;
+
+            // Tier upgrade
+            const tier = gameState.eggTier;
+            tierLabel.textContent = TIER_NAMES[tier];
+            const nextTier = tier + 1;
+            if (nextTier < TIER_NAMES.length) {
+                const cost = getTierCost(nextTier);
+                tierDesc.textContent = `→ ${TIER_NAMES[nextTier]} (${cost.toLocaleString()} 🪙)`;
+                tierCost.textContent = cost.toLocaleString();
+                tierProgress.style.width = `${((tier + 1) / TIER_NAMES.length) * 100}%`;
+            } else {
+                tierDesc.textContent = '🌟 MAX LEVEL!';
+                tierCost.textContent = '—';
+                tierProgress.style.width = '100%';
+            }
+
+            // Auto upgrade
+            const autoLv = gameState.autoLevel;
+            autoLevel.textContent = `Lv.${autoLv}`;
+            autoRate.textContent = getAutoRate(autoLv);
+            autoCost.textContent = getAutoCost(autoLv);
+            const autoMax = 30;
+            autoProgress.style.width = `${Math.min((autoLv / autoMax) * 100, 100)}%`;
+
+            // Luck upgrade
+            const luckLv = gameState.luckLevel;
+            luckLevel.textContent = `Lv.${luckLv}`;
+            luckBonus.textContent = getLuckBonus(luckLv);
+            luckCost.textContent = getLuckCost(luckLv);
+            const luckMax = 25;
+            luckProgress.style.width = `${Math.min((luckLv / luckMax) * 100, 100)}%`;
+
+            // Total level
+            const totalLv = clickLv + tier + autoLv + luckLv;
+            totalUpgradeLevel.textContent = `Lv.${totalLv}`;
+
+            // Username
+            usernameDisplay.textContent = gameState.username || 'Guest';
+
+            // Equipped pet
+            if (gameState.equippedPet && gameState.ownedPets[gameState.equippedPet]) {
+                let emoji = '❓';
+                let drawing = '❓';
+                for (let rarity in PET_REGISTRY) {
+                    const found = PET_REGISTRY[rarity].pets.find(p => p.name === gameState.equippedPet);
+                    if (found) {
+                        emoji = found.emoji;
+                        drawing = found.drawing || found.emoji;
+                        break;
+                    }
+                }
+                equippedPetEmoji.textContent = drawing;
+                equippedPetName.textContent = gameState.equippedPet;
+            } else {
+                equippedPetEmoji.textContent = '❓';
+                equippedPetName.textContent = 'None';
+            }
+
+            // Hatch button
+            const hatchTier = gameState.selectedEggTier || gameState.eggTier;
+            const tierName = TIER_NAMES[hatchTier];
+            const hatchCost = PET_REGISTRY[tierName].cost;
+            hatchBtn.disabled = gameState.coins < hatchCost;
+            hatchCostDisplay.textContent = `Cost: ${hatchCost} 🪙`;
+
+            // Draw egg with selected tier
+            drawEgg(1, hatchTier);
+        }
+
+        // ============================================================
+        // 21. OFFLINE PROGRESS & AUTO GENERATION
+        // ============================================================
+        function calculateOfflineProgress() {
+            const now = Date.now();
+            const elapsed = (now - gameState.lastSave) / 1000;
+            if (elapsed > 10) {
+                const autoRate = getAutoRate(gameState.autoLevel);
+                const offlineCoins = Math.floor(elapsed * autoRate * 0.5);
+                if (offlineCoins > 0) {
+                    gameState.coins += offlineCoins;
+                    showToast(`⏰ Welcome back! +${offlineCoins} offline coins!`, 3000);
+                    updateUI();
+                    saveGame();
+                }
+            }
+        }
+
+        function autoGenerate() {
+            const rate = getAutoRate(gameState.autoLevel);
+            if (rate > 0) {
+                gameState.coins += rate;
+                updateUI();
+            }
+        }
+
+        // ============================================================
+        // 22. INITIALIZATION - FULLY WORKING
+        // ============================================================
+        function init() {
+            // Load save
+            const hasSave = loadGame();
+            if (!hasSave) {
+                setTimeout(openAccount, 400);
+            }
+            updateUI();
+
+            // Setup egg selector
+            setupEggSelector();
+
+            // ===== EGG CLICK =====
+            const eggContainer = $('eggContainer');
+            eggContainer.addEventListener('click', clickEgg);
+            eggContainer.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                clickEgg(e);
+            });
+
+            // ===== HATCH =====
+            hatchBtn.addEventListener('click', hatchEgg);
+
+            // ===== UPGRADES =====
+            $('clickUpgradeCard').addEventListener('click', buyClickUpgrade);
+            $('tierUpgradeCard').addEventListener('click', buyTierUpgrade);
+            $('autoUpgradeCard').addEventListener('click', buyAutoUpgrade);
+            $('luckUpgradeCard').addEventListener('click', buyLuckUpgrade);
+
+            // ===== TOP BAR =====
+            $('accountBtn').addEventListener('click', openAccount);
+            $('saveBtn').addEventListener('click', saveGame);
+            $('resetBtn').addEventListener('click', resetGame);
+            $('codesBtn').addEventListener('click', openCodes);
+            $('collectionBtn').addEventListener('click', openCollection);
+
+            // ===== MODAL =====
+            $('modalClose').addEventListener('click', closeModal);
+            $('modalOverlay').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeModal();
+            });
+
+            // ===== ADMIN PANEL - FULLY WORKING =====
+            $('adminClose').addEventListener('click', () => {
+                adminPanel.classList.remove('visible');
+            });
+            $('adminCoins').addEventListener('click', adminAddCoins);
+            $('adminUnlockAll').addEventListener('click', adminUnlockAllEggs);
+            $('adminClearPets').addEventListener('click', adminClearPets);
+            $('adminMaxUpgrades').addEventListener('click', adminMaxUpgrades);
+            $('adminClosePanel').addEventListener('click', () => {
+                adminPanel.classList.remove('visible');
+            });
+
+            // ===== KEYBOARD SHORTCUTS =====
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    adminPanel.classList.remove('visible');
+                }
+                if ((e.key === ' ' || e.key === 'Enter') && !$('modalOverlay').classList.contains('active')) {
+                    e.preventDefault();
+                    const rect = eggCanvas.getBoundingClientRect();
+                    clickEgg({ clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 });
+                }
+            });
+
+            // ===== OFFLINE & AUTO =====
+            calculateOfflineProgress();
+            setInterval(autoGenerate, 1000);
+            setInterval(saveGame, 30000);
+
+            console.log('🐣 Egg Tales Ultimate loaded!');
+            console.log(`👤 ${gameState.username} | 🪙 ${Math.floor(gameState.coins)} coins`);
+            console.log('🎁 Codes: BANANA100, CHIBI2025, EGGBONUS, GOLDENEGG, PETLOVER, HAPPYHATCH, CHIBICUTE, LUCKYEGG, RAINBOW, STARLIGHT, MOONBEAM');
+            console.log('🔒 DEV BACKDOOR: Type "CHIBI_ADMIN" in codes to unlock admin panel!');
+            console.log('🛠️ Admin features: +1M coins, Unlock all eggs, Clear pets, Max upgrades');
+        }
+
+        // ============================================================
+        // 23. START THE GAME
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Expose functions globally
+        window.adminAddCoins = adminAddCoins;
+        window.adminUnlockAllEggs = adminUnlockAllEggs;
+        window.adminClearPets = adminClearPets;
+        window.adminMaxUpgrades = adminMaxUpgrades;
+        window.closeModal = closeModal;
+        window.setUsername = setUsername;
+        window.redeemCode = redeemCode;
+        window.openCollection = openCollection;
+    </script>
+</body>
+</html>
